@@ -1,3 +1,3 @@
-# camera_robo
+# IDRF
 
-software desenvolvido para controlar um robô que carrega uma câmera sobre um cabo.
+software desenvolvido para controle de uma fechadura a solenoide que pode ser aberta de diversar formas inclusive via smartphone.
