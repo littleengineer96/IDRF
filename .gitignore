@@ -1,0 +1,9 @@
+
+*.dblite
+*.bin
+*.elf
+*.o
+*.json
+*.a
+*.checksum
+*.tmp
