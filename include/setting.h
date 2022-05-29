@@ -15,7 +15,6 @@ void Output_Pins();
 void Initialize_Variables();
 void Setting_Servo();
 
-
 void Comunication(int baud_rate)
 {
     //  Serial.begin(9600); //se #define BLYNK_PRINT Serial
@@ -46,7 +45,10 @@ void Output_Pins()
     // Serial.println("outputpins();");
     // pinMode(OUTPIN_SERVO_PAN, OUTPUT);
     // pinMode(OUTPIN_SERVO_TILT, OUTPUT);
-    pinMode(OUTPIN_A4988_SLEEP, OUTPUT);
+    // pinMode(OUTPIN_A4988_SLEEP, OUTPUT);
+
+    pinMode(PIN_SOLENOIDE, OUTPUT);
+    digitalWrite(PIN_SOLENOIDE, LOW);
 
     String process = "| BOOT] ";
     String step = "Setting > OUTPUT_PINS";
@@ -65,8 +67,8 @@ void Initialize_Variables()
 
 void Setting_Servo()
 {
-    servoPan.attach(OUTPIN_SERVO_PAN);
-    servoTilt.attach(OUTPIN_SERVO_TILT);
+    // servoPan.attach(OUTPIN_SERVO_PAN);
+    // servoTilt.attach(OUTPIN_SERVO_TILT);
     String process = "| BOOT] ";
     String step = "Setting > SETTING_SERVO";
     Serial.println("[" + String(millis()) + process + step);

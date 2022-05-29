@@ -40,8 +40,8 @@ extern unsigned long TimeOut;
 
 extern String output2State;
 
-extern Servo servoPan;
-extern Servo servoTilt;
+// extern Servo servoPan;
+// extern Servo servoTilt;
 
 // extern WidgetTerminal terminal();
 

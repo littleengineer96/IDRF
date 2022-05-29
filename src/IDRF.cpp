@@ -120,6 +120,8 @@ void loop()
     MyESP32.CheckConnection = false;
     TimeCheck = TIME_CHECK_CONNECTION; // reload timer
     // Serial.println(".");
+
+    delay(1000);
   }
 
   if (MyESP32.ConnectedBlynk)
@@ -130,11 +132,12 @@ void loop()
   ArduinoOTA.handle();
 }
 
-// BLYNK_WRITE(MOV_CAN_PAN)
-// {
-//   MyMoves.movCanPan = true;
-//   MyMoves.valueCanPan = param.asInt();
-// }
+BLYNK_WRITE(UNLOCK_PORT)
+{
+  digitalWrite(PIN_SOLENOIDE, HIGH);
+  delay(2000);
+  digitalWrite(PIN_SOLENOIDE, LOW);
+}
 
 // BLYNK_WRITE(MOV_CAN_TILT)
 // {
