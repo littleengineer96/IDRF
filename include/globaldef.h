@@ -62,6 +62,8 @@
 #define UNLOCK_PORT V1 //PINO VIRTUAL PARA CONTROLAR SOLENOIDE
 #define PIN_SOLENOIDE 4 //PINO DE CONTROLE DE SOLENOIDE
 
+
+
 // pins ESP32
 #define OUTPIN_SERVO_PAN 25
 #define OUTPIN_SERVO_TILT 26
@@ -69,6 +71,9 @@
 #define OUTPIN_A4988_SLEEP 14
 #define OUTPIN_A4988_STEP 12
 #define OUTPIN_A4988_DIR 16
+
+#define PIN_CS_MRFC522 5
+#define PIN_RST_MRFC522 2
 
 enum State
 {                           //                                                         LED_ON    LED_OFF

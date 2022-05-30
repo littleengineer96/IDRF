@@ -57,7 +57,7 @@ WidgetTerminal terminal(V4);
 void setup()
 {
   Comunication(BAUD_RATE);
-
+ 
   Setting_Pins();
 
   Start_Timer(TIME_INTERRUPT);
