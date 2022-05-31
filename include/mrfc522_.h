@@ -36,6 +36,25 @@ void MRFC522_get_id()
     Serial.print("Identificador (UID) da tag: "); // IMPRIME O TEXTO NA SERIAL
     Serial.println(strID);                        // IMPRIME NA SERIAL O UID DA TAG RFID
 
+    // String UID_CARD = (String)UID_TAG_CARD;
+    // String UID_CHAVEIRO
+
+    if (strID.compareTo(UID_TAG_CARD) == 0)
+    {
+        Serial.println("Acesso liberado: card ok");
+        digitalWrite(PIN_SOLENOIDE, HIGH);
+        delay(2000);
+        digitalWrite(PIN_SOLENOIDE, LOW);
+    }
+
+    if (strID.compareTo(UID_TAG_CHAVEIRO) == 0)
+    {
+        Serial.println("Acesso liberado: chaveiro ok");
+        digitalWrite(PIN_SOLENOIDE, HIGH);
+        delay(2000);
+        digitalWrite(PIN_SOLENOIDE, LOW);
+    }
+
     rfid.PICC_HaltA();      // PARADA DA LEITURA DO CARTÃO
     rfid.PCD_StopCrypto1(); // PARADA DA CRIPTOGRAFIA NO PCD
 }

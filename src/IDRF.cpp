@@ -57,7 +57,9 @@ WidgetTerminal terminal(V4);
 void setup()
 {
   Comunication(BAUD_RATE);
- 
+
+  MRFC522_setup();
+
   Setting_Pins();
 
   Start_Timer(TIME_INTERRUPT);
@@ -119,8 +121,11 @@ void loop()
 
     MyESP32.CheckConnection = false;
     TimeCheck = TIME_CHECK_CONNECTION; // reload timer
-    // Serial.println(".");
+                                       // Serial.println(".");
 
+    // MRFC522_get_id();
+
+    MRFC522_setup();
     delay(1000);
   }
 

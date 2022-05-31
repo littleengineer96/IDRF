@@ -75,6 +75,8 @@
 #define PIN_CS_MRFC522 5
 #define PIN_RST_MRFC522 2
 
+#define UID_TAG_CARD "C7:CE:CE:D7"
+#define UID_TAG_CHAVEIRO "73:39:99:14"
 enum State
 {                           //                                                         LED_ON    LED_OFF
     NOT_CONNECTED_ST,       // acabou de iniciar não conectado. LED STATICO   CONST

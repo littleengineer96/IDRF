@@ -27,6 +27,7 @@
 #include "setting.h"
 #include "setupBlynk.h"
 #include "setupOTA.h"
+#include "mrfc522_.h"
 
 // settings
 void Setting_Pins(void);
