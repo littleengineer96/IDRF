@@ -103,7 +103,6 @@ void loop()
 
   // MRFC522_get_id();
 
-
   if (MyESP32.CheckConnection)
   {
     CONNECTION_reconnect(ATTEMPTS);
@@ -117,7 +116,7 @@ void loop()
 
   ArduinoOTA.handle();
 
-  delay(1500);
+  delay(1000);
 }
 
 BLYNK_WRITE(UNLOCK_PORT)

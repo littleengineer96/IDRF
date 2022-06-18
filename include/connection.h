@@ -627,56 +627,6 @@ int CONNECTION_WiFiManager()
   Serial.println("Server: " + String(blynk_server));
   Serial.println("Port: " + String(blynk_port));
 
-  // String server = blynk_server;
-
-  // unsigned long ip_server = server.toInt();
-
-  // server = (ip_server / 1000000000) + "." + ((ip_server / 1000000) % 1000) + (String) "." + ((ip_server / 1000) % 1000) + (String) "." + (ip_server % 1000);
-  // Serial.println("Server ok:" + String(server));
-  // Serial.println("local ip:" + WiFi.localIP());
-  // Serial.println(WiFi.localIP());
-
-  // String leng = blynk_token;
-  // // Serial.println(leng.length());
-  // if ((leng.length()) != SIZE_TOKEN)
-  // {
-  //   Serial.println("Blynk_token está incorreto!");
-  //   Serial.println("O dispositivo será resetado..");
-  //   wifiManager.resetSettings();
-  //   SPIFFS.format();
-  //   ESP.restart();
-  // }
-
-  // String pt = blynk_port;
-  // uint16_t port = pt.toInt();
-
-  // char server[15] = "xxx.xxx.xxx.xxx";
-  // char server[15];
-  // for (int i = 0; i < 15; i++)
-  // {
-  //   if ((i != 3) || (i != 7) || (i != 11))
-  //   {
-  //     server[i] = blynk_server[i];
-  //   }
-  // }
-
-  // server[3] = '.';
-  // server[7] = '.';
-  // server[11] = '.';
-
-  // IPAddress(34, 95, 235, 246);
-  // IPAddress(104, 154, 136, 221);
-  // delay(100);
-  // Blynk.config("1TMSnFKpJuWAyK-fR_Ri7TUBsubUKEqs", IPAddress(104, 154, 136, 221), 80);
-  // delay(100);
-  // if (Blynk.connect(TIME_OUT_BLYNK_CONNECT))
-  // {
-  //   Serial.println("\nConnected to Blynk!");
-  // }
-  // else
-  // {
-  //   Serial.println("\nError Connect to Blynk.");
-  // }
 
   if (WiFi.status() == WL_CONNECTED)
   {
