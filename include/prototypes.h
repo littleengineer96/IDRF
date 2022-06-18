@@ -15,6 +15,8 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
+#include <../MFRC522/src/MFRC522.h>
+#include <SPI.h>
 
 #include "connection.h"
 #include "globaldef.h"
@@ -25,7 +27,7 @@
 #include "setting.h"
 #include "setupBlynk.h"
 #include "setupOTA.h"
-
+#include "mrfc522_.h"
 
 // settings
 void Setting_Pins(void);
@@ -59,4 +61,10 @@ void blynkConnect(void);
 void saveStatus(void);
 void readStatus(void);
 
+int BLYNK_connect();
+void BLYNK_connection(unsigned int connection_attempts);
+
+// MRFC522.H
+void MRFC522_get_id();
+void MRFC522_setup();
 #endif
