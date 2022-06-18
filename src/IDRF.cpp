@@ -4,11 +4,7 @@
 
    Software desenvolvido para controlar um robo suspenso em um cabo
 
-   ESP-01  IDE
-   GPIO0    0
-   TXD      1
-   GPIO2    2
-   RXD      3
+
 */
 
 #include "prototypes.h"
@@ -103,12 +99,13 @@ void loop()
 
   // MRFC522_get_id();
 
-  if (MyESP32.CheckConnection)
-  {
-    CONNECTION_reconnect(ATTEMPTS);
-    BLYNK_reconnect(ATTEMPTS);
-    MyESP32.CheckConnection = false;
-  }
+  // faz o dispositivo ficar desconectando
+  //  if (MyESP32.CheckConnection)
+  //  {
+  //    CONNECTION_reconnect(ATTEMPTS);
+  //    BLYNK_reconnect(ATTEMPTS);
+  //    MyESP32.CheckConnection = false;
+  //  }
 
   MRFC522_setup();
 
@@ -117,6 +114,15 @@ void loop()
   ArduinoOTA.handle();
 
   delay(1000);
+
+  /* deep_sleep mode */
+  // esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  // esp_deep_sleep_start();
+
+  /* light sleep mode*/
+  // esp_sleep_enable_timer_wakeup(1000000); // 1 second
+  // int ret = esp_light_sleep_start();
+  // Serial.printf("lp: %d\n", ret);
 }
 
 BLYNK_WRITE(UNLOCK_PORT)
@@ -128,6 +134,31 @@ BLYNK_WRITE(UNLOCK_PORT)
     delay(2000);
     digitalWrite(PIN_SOLENOIDE, LOW);
   }
+}
+
+BLYNK_READ(GET_VBAT)
+{
+  //   #define ADC_VBAT 13
+  // #define RES_R1 47000.0
+  // #define RES_R2 10000.0
+  // #define VREF 3.30
+  // #define RESOLUTION_ADC 4095
+  // Serial.println("*** Read request from Blynk ***");
+  unsigned int samples = SAMPLES;
+  float potValue = 0;
+
+  while (samples--)
+  {
+    potValue += analogRead(ADC_VBAT);
+  }
+
+  potValue = potValue / SAMPLES;
+  // Serial.println("Bateria RAW: " + (String)potValue);
+  potValue = (potValue * VREF) / RESOLUTION_ADC;
+  // Serial.println("Bateria RAW: " + (String)potValue);
+  potValue = potValue * ((RES_R1 + RES_R2) / RES_R2);
+  Serial.println("Bateria: " + (String)potValue + "V");
+  Blynk.virtualWrite(GET_VBAT, potValue);
 }
 
 // BLYNK_WRITE(MOV_CAN_TILT)

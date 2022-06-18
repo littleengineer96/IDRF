@@ -52,7 +52,15 @@
 #define TIME_CHECK_CONNECTION 30 // SEGUNDOS
 #define TIMEOUT_CONNECT 200      //
 
+#define LED_BORD 2
 #define ATTEMPTS 3
+#define SAMPLES 10
+
+#define ADC_VBAT 34
+#define RES_R1 47000.0
+#define RES_R2 8290.0
+#define VREF 3.30
+#define RESOLUTION_ADC 4095
 
 // blynk virtual pins
 #define RESET_WIFI_V255 V255 // switch
@@ -65,6 +73,7 @@
 
 #define UNLOCK_PORT V1  // PINO VIRTUAL PARA CONTROLAR SOLENOIDE
 #define PIN_SOLENOIDE 4 // PINO DE CONTROLE DE SOLENOIDE
+#define GET_VBAT V2
 
 // pins ESP32
 #define OUTPIN_SERVO_PAN 25
@@ -79,6 +88,10 @@
 
 #define UID_TAG_CARD "C7:CE:CE:D7"
 #define UID_TAG_CHAVEIRO "73:39:99:14"
+
+#define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP 10        /* Time ESP32 will go to sleep (in seconds) */
+
 enum State
 {                           //                                                         LED_ON    LED_OFF
     NOT_CONNECTED_ST,       // acabou de iniciar não conectado. LED STATICO   CONST
