@@ -18,23 +18,25 @@
 
 #define N_VERIFY 10 // intervalo de verificações Blynk.connected();
 
-#define VERSION "1v0-"                // versão 1.0
-#define SERIE "1"                     // serie 2
-#define LOTE "A"                      // lote "A"
-#define DEVICE_NAME "Robo_Camera_1v0" // nome completo do dispositivo
+#define VERSION "1v0-"         // versão 1.0
+#define SERIE "1"              // serie 2
+#define LOTE "A"               // lote "A"
+#define DEVICE_NAME "IDRF_1v0" // nome completo do dispositivo
 #define DEVICE_PASS "12345678"
 //#define DIVICE_NAME "WiGatekey2030" //nome completo do dispositivo
 
 #define ssidAP DEVICE_NAME
 #define passAP DEVICE_PASS
 
-#define TIMEOUT_PORTAL 50
+#define TIMEOUT_PORTAL 60      // time in s
 #define TIME_INTERRUPT 1000000 // tempo em us
 //#define TIME_ISR_RESET 500 //tempo em milisegundos, deve ser 1000 para que TIMER_AP seja inserido em segundos
 //#define TIMER_AP 150 //tempo  1s = 2   150 = 75s
 #define TIME_ISR_RESET 250 // tempo em milisegundos, deve ser 1000 para que TIMER_AP seja inserido em segundos
 #define TIMER_AP 150       // tempo  1s = 2   150 = 75s
 #define SIZE_TOKEN 32      // tamanho do token para verificação
+#define SIZE_SERVER 17     // tamanho do token para verificação
+#define SIZE_PORT 5        // tamanho do token para verificação
 
 #define DELAY 2000         // tempo em ms
 #define TIME_LED_ON 500L   // tempo em ms
@@ -43,12 +45,14 @@
 #define TIME_OUT_BLYNK_CONNECT 800L
 
 // connect
-#define SUCESS 1
+#define SUCCESS 1
 #define ERRO 0
 #define DEBUG 0
 #define TRY_AGAIN_CONNECT 4
 #define TIME_CHECK_CONNECTION 30 // SEGUNDOS
-#define TIMEOUT_CONNECT 200      // SEGUNDOS
+#define TIMEOUT_CONNECT 200      //
+
+#define ATTEMPTS 3
 
 // blynk virtual pins
 #define RESET_WIFI_V255 V255 // switch
@@ -59,10 +63,8 @@
 #define MOV_ROBO_RIGHT V3
 #define MOV_ROBO_LEFT V4
 
-#define UNLOCK_PORT V1 //PINO VIRTUAL PARA CONTROLAR SOLENOIDE
-#define PIN_SOLENOIDE 4 //PINO DE CONTROLE DE SOLENOIDE
-
-
+#define UNLOCK_PORT V1  // PINO VIRTUAL PARA CONTROLAR SOLENOIDE
+#define PIN_SOLENOIDE 4 // PINO DE CONTROLE DE SOLENOIDE
 
 // pins ESP32
 #define OUTPIN_SERVO_PAN 25

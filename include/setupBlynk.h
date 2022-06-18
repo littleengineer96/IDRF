@@ -3,62 +3,96 @@
 
 #include "prototypes.h"
 
+extern char blynk_token[35];
+extern char blynk_server[17];
+extern char blynk_port[5];
 
-// extern bool bOffLineMode;
-// extern Verify blynk;
-extern char blynk_token[34];
+int BLYNK_connect();
+int BLYNK_reconnect(unsigned int connection_attempts);
+void BLYNK_connection(unsigned int connection_attempts);
 
-void blynkConnect();
+// void setupBlynk()
+// {
+//   while ((blynk.ConnectionAttemptsCounter != BLYNK_CONNECTION_ATTEMPTS) && (blynk.ConectionState != BLYNK_CONNECTED_ST))
+//   {
+//     blynkConnect(); // conecta ao Blynk
+//   }
 
-void setupBlynk()
+//   if (blynk.ConectionState != BLYNK_CONNECTED_ST)
+//   {
+//     Serial.println("\nTentativa de conexão ao Blynk excedida.");
+//     Serial.println("modo offline ativo");
+//     // server.begin();
+//     blynk.ConnectingVerify = 0; // flag zerada para ter uma contagem exata das tentativas posteriores
+//     delay(DELAY);
+//     bOffLineMode = true; // só entra no modo offline se conseguir se conectar a rede e não conseguir se conectar ao Blynk.
+//   }
+// }
+
+void BLYNK_connection(unsigned int connection_attempts)
 {
-  while ((blynk.ConnectionAttemptsCounter != BLYNK_CONNECTION_ATTEMPTS) && (blynk.ConectionState != BLYNK_CONNECTED_ST))
+  while (connection_attempts)
   {
-    blynkConnect(); // conecta ao Blynk
+    if (BLYNK_connect())
+    {
+      // connection_attempts = 0;
+      break;
+    }
+    else
+    {
+      connection_attempts -= 1;
+    }
   }
 
-  if (blynk.ConectionState != BLYNK_CONNECTED_ST)
+  if (!Blynk.connect())
   {
-    Serial.println("\nTentativa de conexão ao Blynk excedida.");
-    Serial.println("modo offline ativo");
-    // server.begin();
-    blynk.ConnectingVerify = 0; // flag zerada para ter uma contagem exata das tentativas posteriores
-    delay(DELAY);
-    bOffLineMode = true; // só entra no modo offline se conseguir se conectar a rede e não conseguir se conectar ao Blynk.
+    Serial.println("Device not connected to Blynk");
+    Serial.println("The device will restart");
+    ESP.restart();
   }
 }
 
-void blynkConnect()
+int BLYNK_reconnect(unsigned int connection_attempts)
+{
+  if (!Blynk.connect())
+  {
+    BLYNK_connection(connection_attempts);
+  }
+  else
+  {
+    return SUCCESS;
+  }
+}
+
+int BLYNK_connect()
 {
 
   Serial.println("\nConectando ao Blynk...");
 
-  blynk.ConectionState = BLYNK_CONNECTING_ST;
-  blynk.ConnectingVerify++;
-  blynk.ConnectionAttemptsCounter++;
-
-  Blynk.config(blynk_token);
-  //  Blynk.config("CmmH2Eq9mMfW-EclrCYV8uwR5Zn-eWwX", IPAddress(34, 95, 235, 246), 8080);
-  if (Blynk.connect(TIME_OUT_BLYNK_CONNECT))
+  if (WiFi.status() != WL_CONNECTED)
   {
-    Serial.println("\nConnected to Blynk!");
-    blynk.ConectionState = BLYNK_CONNECTED_ST;
-    blynk.ConnectedVerify++;
+    Serial.println("Device not connected WiFi");
+    return ERRO;
+  }
+
+  // Blynk.config(blynk_token);
+  //  Blynk.config("CmmH2Eq9mMfW-EclrCYV8uwR5Zn-eWwX", IPAddress(34, 95, 235, 246), 8080);
+  // String pt = blynk_port;
+  // uint16_t port = pt.toInt();
+
+  Blynk.config(blynk_token, blynk_server, 8080);
+
+  // if (Blynk.connect(TIME_OUT_BLYNK_CONNECT))
+  if (Blynk.connect())
+  {
+    Serial.println("Connected to Blynk!");
+    return SUCCESS;
   }
   else
   {
-    Serial.println("\nError Connect to Blynk.");
-    blynk.ConectionState = BLYNK_NOT_CONNECTED_ST;
-    blynk.NotConnectedVerify++;
+    Serial.println("Error Connect to Blynk.");
+    return ERRO;
   }
-
-  Serial.println("\n----------------------");
-  Serial.println("BLYNK_NOT_CONNECTED_ST:" + String(blynk.NotConnectedVerify));
-  Serial.println("BLYNK_CONNECTING_ST:" + String(blynk.ConnectingVerify));
-  Serial.println("BLYNK_CONNECTED_ST:" + String(blynk.ConnectedVerify));
-  Serial.println("BLYNK_DISCONNECTED_ST:" + String(blynk.DisconnectedVerify));
-  Serial.println("----------------------");
-
-  blynk.ConnectionAttemptsCounter++;
 }
+
 #endif

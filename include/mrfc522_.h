@@ -49,7 +49,7 @@ void MRFC522_get_id()
 
     if (strID.compareTo(UID_TAG_CHAVEIRO) == 0)
     {
-        Serial.println("Acesso liberado: chaveiro ok");
+        Serial.println("Acesso liberado: chaveiro ok\n");
         digitalWrite(PIN_SOLENOIDE, HIGH);
         delay(2000);
         digitalWrite(PIN_SOLENOIDE, LOW);

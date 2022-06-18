@@ -9,6 +9,7 @@
 
 // extern ESP_32 MyESP32;
 // extern hw_timer_t *timer;
+
 void My_Timer();
 
 void Start_Timer(uint64_t time_in_us)
@@ -26,23 +27,18 @@ void Start_Timer(uint64_t time_in_us)
 
 void My_Timer()
 {
+    CountTime += 1;
+
+    // verifica a conexão wifi
     if (TimeCheck)
     {
         TimeCheck -= 1;
-        if (!TimeCheck)
+
+        if (TimeCheck == 0)
         {
             MyESP32.CheckConnection = true;
+            TimeCheck = TIME_CHECK_CONNECTION;
         }
-    }
-
-    if (TimeOutConnect)
-    {
-        TimeOutConnect -= 1;
-    }
-
-    if (TimeOut)
-    {
-        TimeOut -= 1;
     }
 }
 #endif

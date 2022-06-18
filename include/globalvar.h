@@ -36,6 +36,8 @@ extern bool f_Reconnect_Blynk;
 extern unsigned long TimeCheck;
 extern unsigned long TimeOutConnect;
 extern unsigned long TimeOut;
+extern unsigned long CountTime;
+
 // void inite(uint8_t chg_pin);
 
 extern String output2State;

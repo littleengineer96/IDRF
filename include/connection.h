@@ -8,7 +8,10 @@
 // extern ESP_32 MyESP32;
 // extern Verify blynk;
 
-extern char blynk_token[34];
+extern char blynk_token[35];
+extern char blynk_server[17];
+extern char blynk_port[5];
+
 // extern bool f_SerialOut_ON;
 
 // extern unsigned long TimeOutConnect;
@@ -17,7 +20,7 @@ extern char blynk_token[34];
 // extern const char esp32_rede[20];
 // extern const char esp32_pass[20];
 
-bool shouldSaveConfig = false;
+bool shouldSaveConfig = true;
 bool tokenInvalid = false;
 
 int Blynk_Connect();
@@ -28,6 +31,13 @@ String WiFi_State();
 int WiFi_Manager();
 void Save_Config_Callback();
 bool WiFi_Connected();
+// void setupWIFI();
+
+void CONNECTION_WiFi();
+int CONNECTION_WiFiManager();
+int CONNECTION_reconnect(unsigned int connection_attempts);
+
+void saveConfigCallback();
 
 enum Return
 {
@@ -142,7 +152,7 @@ int Assistant_WiFi()
       break;
     case WS_CONNECTED:
       step = "WS_CONNECTED > ";
-      back = WiFi_Manager();
+      // back = WiFi_Manager();
       if (back == SUCCESS_)
       {
         step += "WS_CONNECT_SUCCESS";
@@ -309,7 +319,7 @@ int Assistant_Blynk()
       break;
     case BS_INVALID_TOKEN:
       step = "BS_INVALID_TOKEN >";
-      back = WiFi_Manager();
+      // back = WiFi_Manager();
       if (back == SUCCESS_)
       {
         step += "BS_CONNECTED";
@@ -368,7 +378,7 @@ int Reconnect_WiFi()
 
   if (WiFi_Connected())
   {
-    back = SUCESS;
+    // back = SUCESS;
     return back;
   }
 
@@ -421,7 +431,7 @@ int Reconnect_WiFi()
 
   if (WiFi.status() == WL_CONNECTED)
   {
-    back = SUCESS;
+    // back = SUCESS;
   }
 
   return back;
@@ -460,181 +470,223 @@ String WiFi_State()
   }
 }
 
-int WiFi_Manager()
+void saveConfigCallback()
 {
-  int back = NULL_;
+  Serial.println("Should save config");
+  shouldSaveConfig = true;
+}
 
-  String step;
-  String result;
-  String process = " | WiFi_Manager] ";
-
-  if ((WiFi.status() != WL_CONNECTED) || tokenInvalid)
+void CONNECTION_WiFi(unsigned int connection_attempts)
+{
+  while (connection_attempts)
   {
 
-    // if (!tokenInvalid)
-    // {
-    //   WiFi.disconnect();
-    // }
-    // wifi.ConectionState = CONNECTING_ST; // indica o status do dispositivo "tento se conectar"
-    // wifi.ConnectingVerify++;             // conta a quantidade de vezes que o dispositivo tentou se conectar
-
-    // Serial.println("mounting FS...");
-
-    if (SPIFFS.begin())
+    if (CONNECTION_WiFiManager())
     {
-      // Serial.println("mounted file system");
-      if (SPIFFS.exists("/config.json"))
-      {
-        // file exists, reading and loading
-        // se existe o arquivo, carregue e leia
-        // Serial.println("reading config file");
-        File configFile = SPIFFS.open("/config.json", "r");
-        if (configFile)
-        {
-          // Serial.println("opened config file");
-          size_t size = configFile.size();
-          // Allocate a buffer to store contents of the file.
-          std::unique_ptr<char[]> buf(new char[size]);
-
-          configFile.readBytes(buf.get(), size);
-          DynamicJsonBuffer jsonBuffer;
-          JsonObject &json = jsonBuffer.parseObject(buf.get());
-          json.printTo(Serial);
-          if (json.success())
-          {
-            // Serial.println("\nparsed json");
-            strcpy(blynk_token, json["blynk_token"]);
-          }
-          else
-          {
-            // Serial.println("failed to load json config");
-            step = "Failed to load json config";
-            Serial.println("[" + String(millis()) + process + step);
-          }
-          configFile.close();
-        }
-      }
+      // connection_attempts = 0;
+      break;
     }
     else
     {
-      // Serial.println("failed to mount FS");
-      step = "Failed to mount FS";
-      Serial.println("[" + String(millis()) + process + step);
-    } // end read
-    //  digitalWrite(LED_, false);
-    //   Serial.println(blynk_token);
-    WiFiManagerParameter custom_blynk_token("blynk", "Blynk Token", blynk_token, SIZE_TOKEN);
-
-    WiFiManager wifiManager;
-
-    // wifiManager.resetSettings();
-    wifiManager.setTimeout(TIMEOUT_PORTAL);
-    wifiManager.setSaveConfigCallback(Save_Config_Callback);
-    wifiManager.addParameter(&custom_blynk_token);
-    wifiManager.setHostname("mydevice.com");
-    // wifiManager.startConfigPortal(ssidAP, "12345678");
-    // wifiManager.startWebPortal();
-    // startConfigPortal
-
-    if (tokenInvalid)
-    {
-      // if (tokenInvalid)
-      // {
-      //   Serial.println("--------");
-      //   wifiManager.startConfigPortal(ssidAP,passAP);
-      //   /* code */
-      // }
+      connection_attempts -= 1;
     }
-    else
+  }
+
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.println("Device not connected WiFi");
+    Serial.println("The device will restart");
+    ESP.restart();
+  }
+}
+int CONNECTION_reconnect(unsigned int connection_attempts)
+{
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    while (connection_attempts)
     {
-      if (!wifiManager.autoConnect(ssidAP, passAP))
+      if (WiFi.reconnect())
       {
-        // Serial.println("failed to connect and hit timeout");
-        step = "Failed to connect and hit timeout";
-        Serial.println("[" + String(millis()) + process + step);
+        return SUCCESS;
+      }
+      else
+      {
+        connection_attempts -= 1;
       }
     }
 
-    // Serial.println("connected...yeey :)");
-    strcpy(blynk_token, custom_blynk_token.getValue());
-    String leng = blynk_token;
-
-    if (leng.length() != SIZE_TOKEN) // só reseta as configurações se conseguir se conectar a rede e a quantidade de caracteres do blynk_tokne for != SIZE_TOKEN
+    if (WiFi.status() != WL_CONNECTED)
     {
-      // Serial.println("Blynk_token está incorreto!");
-      // Serial.println("O dispositivo será resetado..");
-
-      step = "Invalid blynk token different size";
-      Serial.println("[" + String(millis()) + process + step);
-      char blynk_token_aux[34] = "YOUR_BLYNK_TOKEN_INVALID";
-
-      for (int i = 0; i < 34; i++)
-      {
-        blynk_token[i] = blynk_token_aux[i];
-      }
-      Serial.println("TOKEN: " + String(blynk_token));
-    }
-
-    // save the custom parameters to FS
-    // if (shouldSaveConfig && (wifi.ConectionState != NOT_CONNECTED_ST))
-    if (shouldSaveConfig)
-    {
-      Serial.println("saving config");
-      DynamicJsonBuffer jsonBuffer;
-      JsonObject &json = jsonBuffer.createObject();
-      json["blynk_token"] = blynk_token;
-
-      File configFile = SPIFFS.open("/config.json", "w");
-      if (!configFile)
-      {
-        Serial.println("failed to open config file for writing");
-        // rt = ERRO;
-      }
-
-      json.printTo(Serial);
-      json.printTo(configFile);
-      configFile.close();
-      Serial.println("");
-      // end save
-    }
-
-    // Serial.println("local ip:" + WiFi.localIP());
-    // Serial.println(WiFi.localIP());
-    String psk = WiFi.psk();
-    String ssid = WiFi.SSID();
-
-    Serial.println("SSID: " + ssid + " pass: " + psk);
-    // Serial.println("Token: " + leng);
-    //   Serial.println(leng.length());
-
-    // if (((leng.length()) != SIZE_TOKEN) & (wifi.ConectionState != NOT_CONNECTED_ST)) // só reseta as configurações se conseguir se conectar a rede e a quantidade de caracteres do blynk_tokne for != SIZE_TOKEN
-    // if (leng.length() != SIZE_TOKEN) // só reseta as configurações se conseguir se conectar a rede e a quantidade de caracteres do blynk_tokne for != SIZE_TOKEN
-
-    // {
-    //   Serial.println("Blynk_token está incorreto!");
-    //   Serial.println("O dispositivo será resetado..");
-    //   wifiManager.resetSettings();
-    //   SPIFFS.format();
-    //   ESP.restart();
-    // }
-
-    if (WiFi.status() == WL_CONNECTED) // caso aconteça a conexão
-    {
-      // wifi.ConectionState = CONNECTED_ST;
-      // wifi.ConnectedVerify++;
-      back = SUCCESS_;
-    }
-    else
-    {
-      back = ERRO_;
+      Serial.println("Device not reconnected WiFi");
+      Serial.println("The device will restart");
+      ESP.restart();
     }
   }
   else
   {
-    back = SUCCESS_;
+    return SUCCESS;
+  }
+}
+
+int CONNECTION_WiFiManager()
+{
+  Serial.println("mounting FS...");
+
+  if (SPIFFS.begin())
+  {
+    Serial.println("mounted file system");
+    if (SPIFFS.exists("/config.json"))
+    {
+      // file exists, reading and loading
+      // se existe o arquivo, carregue e leia
+      Serial.println("reading config file");
+      File configFile = SPIFFS.open("/config.json", "r");
+      if (configFile)
+      {
+        Serial.println("opened config file");
+        size_t size = configFile.size();
+        // Allocate a buffer to store contents of the file.
+        std::unique_ptr<char[]> buf(new char[size]);
+
+        configFile.readBytes(buf.get(), size);
+        DynamicJsonBuffer jsonBuffer;
+        JsonObject &json = jsonBuffer.parseObject(buf.get());
+        json.printTo(Serial);
+        if (json.success())
+        {
+          Serial.println("\nparsed json");
+          strcpy(blynk_token, json["blynk_token"]);
+          strcpy(blynk_server, json["blynk_server"]);
+          strcpy(blynk_port, json["blynk_port"]);
+        }
+        else
+        {
+          Serial.println("failed to load json config");
+        }
+        configFile.close();
+      }
+    }
+  }
+  else
+  {
+    Serial.println("failed to mount FS");
+  } // end read
+  //  digitalWrite(LED_, false);
+  //   Serial.println(blynk_token);
+  WiFiManagerParameter custom_blynk_token("blynk", "Blynk Token", blynk_token, SIZE_TOKEN + 3);
+  WiFiManagerParameter custom_blynk_server("server", "Blynk Server", blynk_server, SIZE_SERVER);
+  WiFiManagerParameter custom_blynk_port("port", "Blynk Port", blynk_port, SIZE_PORT);
+
+  WiFiManager wifiManager;
+  //      wifiManager.resetSettings();
+
+  wifiManager.setTimeout(TIMEOUT_PORTAL);
+  wifiManager.setSaveConfigCallback(saveConfigCallback);
+  wifiManager.setHostname("mydevice.com");
+  wifiManager.addParameter(&custom_blynk_token);
+  wifiManager.addParameter(&custom_blynk_server);
+  wifiManager.addParameter(&custom_blynk_port);
+
+  if (!wifiManager.autoConnect(ssidAP, passAP))
+  {
+    Serial.println("failed to connect and hit timeout");
+    ESP.restart();
+  }
+  // Serial.println("connected...yeey :)");
+  strcpy(blynk_token, custom_blynk_token.getValue());
+  strcpy(blynk_server, custom_blynk_server.getValue());
+  strcpy(blynk_port, custom_blynk_port.getValue());
+
+  // Serial.println("\n0 Token:" + String(blynk_token));
+  // Serial.println("0 Server:" + String(blynk_server));
+  // Serial.println("0 Port:" + String(blynk_port));
+  // save the custom parameters to FS
+
+  if (shouldSaveConfig)
+  {
+    Serial.println("saving config");
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject &json = jsonBuffer.createObject();
+    json["blynk_token"] = blynk_token;
+    json["blynk_server"] = blynk_server;
+    json["blynk_port"] = blynk_port;
+
+    File configFile = SPIFFS.open("/config.json", "w");
+    if (!configFile)
+    {
+      Serial.println("failed to open config file for writing");
+    }
+
+    json.printTo(Serial);
+    json.printTo(configFile);
+    configFile.close();
+    // end save
   }
 
-  return back;
+  Serial.println("\nToken: " + String(blynk_token));
+  Serial.println("Server: " + String(blynk_server));
+  Serial.println("Port: " + String(blynk_port));
+
+  // String server = blynk_server;
+
+  // unsigned long ip_server = server.toInt();
+
+  // server = (ip_server / 1000000000) + "." + ((ip_server / 1000000) % 1000) + (String) "." + ((ip_server / 1000) % 1000) + (String) "." + (ip_server % 1000);
+  // Serial.println("Server ok:" + String(server));
+  // Serial.println("local ip:" + WiFi.localIP());
+  // Serial.println(WiFi.localIP());
+
+  // String leng = blynk_token;
+  // // Serial.println(leng.length());
+  // if ((leng.length()) != SIZE_TOKEN)
+  // {
+  //   Serial.println("Blynk_token está incorreto!");
+  //   Serial.println("O dispositivo será resetado..");
+  //   wifiManager.resetSettings();
+  //   SPIFFS.format();
+  //   ESP.restart();
+  // }
+
+  // String pt = blynk_port;
+  // uint16_t port = pt.toInt();
+
+  // char server[15] = "xxx.xxx.xxx.xxx";
+  // char server[15];
+  // for (int i = 0; i < 15; i++)
+  // {
+  //   if ((i != 3) || (i != 7) || (i != 11))
+  //   {
+  //     server[i] = blynk_server[i];
+  //   }
+  // }
+
+  // server[3] = '.';
+  // server[7] = '.';
+  // server[11] = '.';
+
+  // IPAddress(34, 95, 235, 246);
+  // IPAddress(104, 154, 136, 221);
+  // delay(100);
+  // Blynk.config("1TMSnFKpJuWAyK-fR_Ri7TUBsubUKEqs", IPAddress(104, 154, 136, 221), 80);
+  // delay(100);
+  // if (Blynk.connect(TIME_OUT_BLYNK_CONNECT))
+  // {
+  //   Serial.println("\nConnected to Blynk!");
+  // }
+  // else
+  // {
+  //   Serial.println("\nError Connect to Blynk.");
+  // }
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("\nConnected to WiFi!");
+    return SUCCESS;
+  }
+  else
+  {
+    return ERRO;
+  }
 }
 
 void Save_Config_Callback()
@@ -684,15 +736,15 @@ int Blynk_Connect()
 
   back = Blynk.connect();
 
-  if (Blynk.isTokenInvalid())
-  {
-    back = INVALID_TOKEN;
-    tokenInvalid = true;
-  }
-  else
-  {
-    tokenInvalid = false;
-  }
+  // if (Blynk.isTokenInvalid())
+  // {
+  //   back = INVALID_TOKEN;
+  //   tokenInvalid = true;
+  // }
+  // else
+  // {
+  //   tokenInvalid = false;
+  // }
 
   //  Blynk.config("CmmH2Eq9mMfW-EclrCYV8uwR5Zn-eWwX", IPAddress(34, 95, 235, 246), 8080);
 

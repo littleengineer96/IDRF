@@ -35,7 +35,10 @@ bool lock_button = true;
 
 const char esp32_rede[20] = DEVICE_NAME;
 const char esp32_pass[20] = DEVICE_PASS;
-char blynk_token[34] = "YOUR_BLYNK_TOKEN";
+
+char blynk_token[35] = "YOUR_BLYNK_TOKEN";
+char blynk_server[17] = "YOUR_SERVER";
+char blynk_port[5] = "PORT";
 
 hw_timer_t *timer = NULL;
 
@@ -46,6 +49,7 @@ bool f_Reconnect_Blynk = false;
 unsigned long TimeCheck = 0;
 unsigned long TimeOutConnect = 0;
 unsigned long TimeOut = 0;
+unsigned long CountTime = 0;
 
 String output2State;
 
@@ -64,25 +68,30 @@ void setup()
 
   Start_Timer(TIME_INTERRUPT);
 
-  MyESP32.ConnectedWiFi = Assistant_WiFi();
+  // setupWIFI();
+  CONNECTION_WiFi(ATTEMPTS);
+  BLYNK_connection(ATTEMPTS);
 
-  if (MyESP32.ConnectedWiFi)
-  {
-    int result = Assistant_Blynk();
-    if (result == SUCCESS_)
-    {
-      MyESP32.ConnectedBlynk = true;
-    }
-    else if ((result == ERRO_) || result == INVALID_TOKEN)
-    {
-      MyESP32.ConnectedBlynk = false;
-    }
-    else
-    {
-      MyESP32.ConnectedBlynk = false;
-      MyESP32.ConnectedWiFi = false;
-    }
-  }
+  // // Blynk.config(blynk_token, blynk_server, 8080);
+  // // Blynk.begin(blynk_token, "Game_Play_LanH", "25061997", IPAddress(104, 154, 136, 221), 8080);
+  // // Blynk.config(blynk_token);
+  // // Blynk.connect();
+  // // Serial.println(WiFi.status());
+  // if (WiFi.status() == WL_CONNECTED)
+  // {
+  //   Serial.println("Conectado ao Wifi");
+  // }
+
+  // if (Blynk.connect())
+  // {
+  //   Serial.println("\nConnected to Blynk!");
+  // }
+  // else
+  // {
+  //   Serial.println("\nError Connect to Blynk.");
+  // }
+  // WL_CONNECTED
+  // blynkConnect();
 
   Programming_OTA();
 
@@ -91,57 +100,35 @@ void setup()
 
 void loop()
 {
+
+  // MRFC522_get_id();
+
+
   if (MyESP32.CheckConnection)
   {
-    MyESP32.ConnectedBlynk = Blynk.connected();
-    MyESP32.ConnectedWiFi = WiFi_Connected();
-
-    if (!MyESP32.ConnectedWiFi)
-    {
-      MyESP32.ConnectedWiFi = Assistant_WiFi();
-    }
-
-    if (!MyESP32.ConnectedBlynk && MyESP32.ConnectedWiFi)
-    {
-      int result = Assistant_Blynk();
-      if (result == SUCCESS_)
-      {
-        MyESP32.ConnectedBlynk = true;
-      }
-      else if ((result == ERRO_) || result == INVALID_TOKEN)
-      {
-        MyESP32.ConnectedBlynk = false;
-      }
-      else
-      {
-        MyESP32.ConnectedBlynk = false;
-        MyESP32.ConnectedWiFi = false;
-      }
-    }
-
+    CONNECTION_reconnect(ATTEMPTS);
+    BLYNK_reconnect(ATTEMPTS);
     MyESP32.CheckConnection = false;
-    TimeCheck = TIME_CHECK_CONNECTION; // reload timer
-                                       // Serial.println(".");
-
-    // MRFC522_get_id();
-
-    MRFC522_setup();
-    delay(1000);
   }
 
-  if (MyESP32.ConnectedBlynk)
-  {
-    Blynk.run();
-  }
+  MRFC522_setup();
+
+  Blynk.run();
 
   ArduinoOTA.handle();
+
+  delay(1500);
 }
 
 BLYNK_WRITE(UNLOCK_PORT)
 {
-  digitalWrite(PIN_SOLENOIDE, HIGH);
-  delay(2000);
-  digitalWrite(PIN_SOLENOIDE, LOW);
+  int value = param.asInt(); // Get value as integer
+  if (value)
+  {
+    digitalWrite(PIN_SOLENOIDE, HIGH);
+    delay(2000);
+    digitalWrite(PIN_SOLENOIDE, LOW);
+  }
 }
 
 // BLYNK_WRITE(MOV_CAN_TILT)
@@ -171,7 +158,7 @@ BLYNK_WRITE(RESET_WIFI_V255)
     wifiConnect.resetSettings();
     WiFi.disconnect();
     TimeCheck = 1;
-    // SPIFFS.format();
-    // ESP.restart();
+    SPIFFS.format();
+    ESP.restart();
   }
 }
