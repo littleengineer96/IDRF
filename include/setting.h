@@ -46,6 +46,8 @@ void Output_Pins()
     // pinMode(OUTPIN_SERVO_PAN, OUTPUT);
     // pinMode(OUTPIN_SERVO_TILT, OUTPUT);
     // pinMode(OUTPIN_A4988_SLEEP, OUTPUT);
+    // pinMode(LED_BORD, OUTPUT);
+    // digitalWrite(LED_BORD, LOW);
 
     pinMode(PIN_SOLENOIDE, OUTPUT);
     digitalWrite(PIN_SOLENOIDE, LOW);

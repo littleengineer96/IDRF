@@ -29,6 +29,15 @@ void My_Timer()
 {
     CountTime += 1;
 
+    // if ((CountTime % 2) == 0)
+    // {
+    //     digitalWrite(LED_BORD, LOW);
+    // }
+    // else
+    // {
+    //     digitalWrite(LED_BORD, HIGH);
+    // }
+
     // verifica a conexão wifi
     if (TimeCheck)
     {
