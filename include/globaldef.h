@@ -63,7 +63,7 @@
 #define RESOLUTION_ADC 4095
 
 // blynk virtual pins
-#define RESET_WIFI_V255 V255 // switch
+#define RESET_WIFI_V50 V50 // switch
 // #define ON_OFF_V2 V2      // switch
 // #define LOCK_BUTTON_V3 V3 // status
 #define MOV_CAN_PAN V1
@@ -90,7 +90,15 @@
 #define UID_TAG_CHAVEIRO "73:39:99:14"
 
 #define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP 10        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP 10       /* Time ESP32 will go to sleep (in seconds) */
+
+//======= START PINS DISPLAY OLED =======
+
+#define SDA_PIN 21
+#define SCL_PIN 22
+#define ADDR_I2C_DISPLAY 0x3C
+
+//======= END PINS DISPLAY OLED =======
 
 enum State
 {                           //                                                         LED_ON    LED_OFF

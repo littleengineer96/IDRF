@@ -32,9 +32,9 @@ bool lock_button = true;
 const char esp32_rede[20] = DEVICE_NAME;
 const char esp32_pass[20] = DEVICE_PASS;
 
-char blynk_token[35] = "YOUR_BLYNK_TOKEN";
-char blynk_server[17] = "YOUR_SERVER";
-char blynk_port[5] = "PORT";
+char blynk_token[40] = "YOUR_BLYNK_TOKEN";
+char blynk_server[25] = "YOUR_SERVER";
+char blynk_port[10] = "PORT";
 
 hw_timer_t *timer = NULL;
 
@@ -53,10 +53,18 @@ String output2State;
 // Servo servoTilt;
 
 WidgetTerminal terminal(V4);
+SSD1306 display(ADDR_I2C_DISPLAY, SDA_PIN, SCL_PIN); // ADDRESS, SDA, SCL
 
 void setup()
 {
+
   Comunication(BAUD_RATE);
+
+  display.init();
+  display.clear();
+  display.flipScreenVertically(); // inveter
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(10, 0, "IDRF V1.0");
 
   MRFC522_setup();
 
@@ -64,30 +72,17 @@ void setup()
 
   Start_Timer(TIME_INTERRUPT);
 
-  // setupWIFI();
+  display.drawString(10, 16, "Connect WiFi..");
+  display.display();
+
   CONNECTION_WiFi(ATTEMPTS);
+
+  display.drawString(10, 32, "Connected WiFi!");
+  display.display();
   BLYNK_connection(ATTEMPTS);
 
-  // // Blynk.config(blynk_token, blynk_server, 8080);
-  // // Blynk.begin(blynk_token, "Game_Play_LanH", "25061997", IPAddress(104, 154, 136, 221), 8080);
-  // // Blynk.config(blynk_token);
-  // // Blynk.connect();
-  // // Serial.println(WiFi.status());
-  // if (WiFi.status() == WL_CONNECTED)
-  // {
-  //   Serial.println("Conectado ao Wifi");
-  // }
-
-  // if (Blynk.connect())
-  // {
-  //   Serial.println("\nConnected to Blynk!");
-  // }
-  // else
-  // {
-  //   Serial.println("\nError Connect to Blynk.");
-  // }
-  // WL_CONNECTED
-  // blynkConnect();
+  display.drawString(10, 48, "Connected Blynk!");
+  display.display();
 
   Programming_OTA();
 
@@ -113,7 +108,7 @@ void loop()
 
   ArduinoOTA.handle();
 
-  delay(1000);
+  delay(1500);
 
   /* deep_sleep mode */
   // esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
@@ -179,7 +174,7 @@ BLYNK_READ(GET_VBAT)
 //   MyMoves.valueRoboLeft = param.asInt();
 // }
 
-BLYNK_WRITE(RESET_WIFI_V255)
+BLYNK_WRITE(RESET_WIFI_V50)
 {
   int value = param.asInt(); // Get value as integer
   if (value)

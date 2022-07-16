@@ -17,6 +17,7 @@
 #include <WiFiManager.h>
 #include <../MFRC522/src/MFRC522.h>
 #include <SPI.h>
+#include "SSD1306.h"
 
 #include "connection.h"
 #include "globaldef.h"

@@ -8,9 +8,9 @@
 // extern ESP_32 MyESP32;
 // extern Verify blynk;
 
-extern char blynk_token[35];
-extern char blynk_server[17];
-extern char blynk_port[5];
+extern char blynk_token[40];
+extern char blynk_server[25];
+extern char blynk_port[10];
 
 // extern bool f_SerialOut_ON;
 
@@ -549,10 +549,19 @@ int CONNECTION_WiFiManager()
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
+
+        /* version json < 6
         DynamicJsonBuffer jsonBuffer;
         JsonObject &json = jsonBuffer.parseObject(buf.get());
         json.printTo(Serial);
         if (json.success())
+        {
+        */
+
+        DynamicJsonDocument json(1024);
+        auto deserializeError = deserializeJson(json, buf.get());
+        serializeJson(json, Serial);
+        if (!deserializeError)
         {
           Serial.println("\nparsed json");
           strcpy(blynk_token, json["blynk_token"]);
@@ -574,8 +583,8 @@ int CONNECTION_WiFiManager()
   //  digitalWrite(LED_, false);
   //   Serial.println(blynk_token);
   WiFiManagerParameter custom_blynk_token("blynk", "Blynk Token", blynk_token, SIZE_TOKEN + 3);
-  WiFiManagerParameter custom_blynk_server("server", "Blynk Server", blynk_server, SIZE_SERVER);
-  WiFiManagerParameter custom_blynk_port("port", "Blynk Port", blynk_port, SIZE_PORT);
+  WiFiManagerParameter custom_blynk_server("server", "Blynk Server", blynk_server, SIZE_SERVER + 3);
+  WiFiManagerParameter custom_blynk_port("port", "Blynk Port", blynk_port, SIZE_PORT + 3);
 
   WiFiManager wifiManager;
   //      wifiManager.resetSettings();
@@ -605,20 +614,31 @@ int CONNECTION_WiFiManager()
   if (shouldSaveConfig)
   {
     Serial.println("saving config");
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject &json = jsonBuffer.createObject();
+    DynamicJsonDocument json(1024); // version >= 6
+    // DynamicJsonBuffer jsonBuffer;
+    // JsonObject &json = jsonBuffer.createObject();
     json["blynk_token"] = blynk_token;
     json["blynk_server"] = blynk_server;
     json["blynk_port"] = blynk_port;
 
+    if (SPIFFS.begin())
+    {
+      Serial.println("mounted file system [2]");
+    }
+    else
+    {
+      Serial.println("failed to mount FS [2]");
+    }
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile)
     {
       Serial.println("failed to open config file for writing");
     }
+    serializeJson(json, Serial);
+    serializeJson(json, configFile);
 
-    json.printTo(Serial);
-    json.printTo(configFile);
+    // json.printTo(Serial);
+    // json.printTo(configFile);
     configFile.close();
     // end save
   }
@@ -627,6 +647,16 @@ int CONNECTION_WiFiManager()
   Serial.println("Server: " + String(blynk_server));
   Serial.println("Port: " + String(blynk_port));
 
+  String token = blynk_token;
+  int sizeToken = token.length();
+  if (sizeToken != SIZE_TOKEN)
+  {
+    Serial.println("Size Token invalido!");
+    Serial.println("o dispositivo será reiniciado");
+
+    // WiFiManager wifiConnect;
+    wifiManager.resetSettings();
+  }
 
   if (WiFi.status() == WL_CONNECTED)
   {

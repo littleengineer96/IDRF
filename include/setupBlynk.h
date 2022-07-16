@@ -3,9 +3,9 @@
 
 #include "prototypes.h"
 
-extern char blynk_token[35];
-extern char blynk_server[17];
-extern char blynk_port[5];
+extern char blynk_token[40];
+extern char blynk_server[25];
+extern char blynk_port[10];
 
 int BLYNK_connect();
 int BLYNK_reconnect(unsigned int connection_attempts);
