@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include <BlynkSimpleEsp32.h>
-#include <Servo.h>
+// #include <Servo.h>
 // #include "FastAccelStepper.h"
 #include <Arduino.h>
 #include <TimeLib.h>
@@ -15,10 +15,12 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
-#include <../MFRC522/src/MFRC522.h>
+#include <MFRC522.h>
+
+// #include <../MFRC522/src/MFRC522.h>
 #include <SPI.h>
 
-#include "connection.h"
+// #include "connection.h"
 #include "globaldef.h"
 #include "globalvar.h"
 #include "isr.h"

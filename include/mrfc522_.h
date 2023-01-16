@@ -10,7 +10,6 @@ MFRC522 rfid(PIN_CS_MRFC522, PIN_RST_MRFC522);
 
 void MRFC522_setup()
 {
-
     SPI.begin();
     rfid.PCD_Init();
     MRFC522_get_id();
