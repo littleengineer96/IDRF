@@ -1,14 +1,9 @@
 /*
    Software desenvolvido para controle de abertura/fechamento de
    portão eletronico pelo smartphone usando a plataforma Blynk
-
-   Software desenvolvido para controlar um robo suspenso em um cabo
-
-
 */
 
 #include "prototypes.h"
-#include <Keypad.h> // Biblioteca do codigo
 
 bool bOffLineMode = false;
 bool f_SerialOut_ON = true;
@@ -50,41 +45,20 @@ unsigned long CountTime = 0;
 
 String output2State;
 
-// Servo servoPan;
-// Servo servoTilt;
-
 WidgetTerminal terminal(V4);
 
 const byte LINHAS = 4;  // Linhas do teclado
 const byte COLUNAS = 3; // Colunas do teclado
-
-// const char TECLAS_MATRIZ[LINHAS][COLUNAS] = { // Matriz de caracteres (mapeamento do teclado)
-//   {'1', '2', '3', 'A'},
-//   {'4', '5', '6', 'B'},
-//   {'7', '8', '9', 'C'},
-//   {'*', '0', '#', 'D'}
-// };
-
-// const char TECLAS_MATRIZ[LINHAS][COLUNAS] = { // Matriz de caracteres (mapeamento do teclado)
-//   {'1', '2', '3', },
-//   {'4', '5', '6', },
-//   {'7', '8', '9', },
-//   {'*', '0', '#', }
-// };
-
-// byte PINOS_LINHAS[LINHAS] = {12, 14, 27, 26}; // Pinos de conexao com as linhas do teclado
-// byte PINOS_COLUNAS[COLUNAS] = {25, 33, 32}; // Pinos de conexao com as colunas do teclado
-
-// Keypad teclado_personalizado = Keypad(makeKeymap(TECLAS_MATRIZ), PINOS_LINHAS, PINOS_COLUNAS, LINHAS, COLUNAS); // Inicia teclado
 
 // armazena o valor da leitura inicial
 unsigned long startValueTouch12;
 unsigned long startValueTouch14;
 unsigned long startValueTouch27;
 
-float percentTouch12 = 0.30; // percentual com relação a primeira leitura
-float percentTouch14 = 0.30; // percentual com relação a primeira leitura
-float percentTouch27 = 0.30; // percentual com relação a primeira leitura
+// percentual com relação a primeira leitura
+float percentTouch12 = 0.30;
+float percentTouch14 = 0.30;
+float percentTouch27 = 0.30;
 
 unsigned long factorTouch12;
 unsigned long factorTouch14;
@@ -93,15 +67,25 @@ unsigned long factorTouch27;
 unsigned long touch12;
 unsigned long touch14;
 unsigned long touch27;
-// unsigned long timeOut;
 
-unsigned long debounceTouch12;
-unsigned long debounceTouch14;
-unsigned long debounceTouch27;
+unsigned long debounceTouch12 = 200;
+unsigned long debounceTouch14 = 200;
+unsigned long debounceTouch27 = 200;
 
-bool leanTouch12 = false; // indica que o Touch foi tocado...
-bool leanTouch14 = false; // indica que o Touch foi tocado...
-bool leanTouch27 = false; // indica que o Touch foi tocado...
+unsigned long timeoutTouch12;
+unsigned long timeoutTouch14;
+unsigned long timeoutTouch27;
+
+// indica que o Touch foi tocado...
+bool leanTouch12 = false;
+bool leanTouch14 = false;
+bool leanTouch27 = false;
+
+// toque reconhecido
+bool recognizedTouch12 = false;
+bool recognizedTouch14 = false;
+bool recognizedTouch27 = false;
+
 void setup()
 {
   Comunication(BAUD_RATE);
@@ -181,41 +165,43 @@ void loop()
   touch14 = touchRead(14);
   touch27 = touchRead(27);
 
-  if ((touch12 < (factorTouch12)) && ((millis() - debounceTouch12) > 200))
+  // identifica o toque
+  if ((touch12 < (factorTouch12)) && ((millis() - timeoutTouch12) > debounceTouch12))
   {
-    // Serial.println(".");
     leanTouch12 = true;
   }
-  if ((touch14 < (factorTouch14)) && ((millis() - debounceTouch14) > 200))
+  if ((touch14 < (factorTouch14)) && ((millis() - timeoutTouch14) > debounceTouch14))
   {
-    // Serial.println("..");
     leanTouch14 = true;
   }
-  if ((touch27 < (factorTouch27)) && ((millis() - debounceTouch27) > 200))
+  if ((touch27 < (factorTouch27)) && ((millis() - timeoutTouch27) > debounceTouch27))
   {
-    // Serial.println("...");
     leanTouch27 = true;
   }
 
+  // define o toque... "apos levantar o dedo"
   if ((touch12 > (factorTouch12 * 2)) && leanTouch12)
   {
     leanTouch12 = false;
     Serial.println("Touch 12: " + String(touch12));
-    debounceTouch12 = millis();
+    timeoutTouch12 = millis();
+    recognizedTouch12 = true;
   }
 
   if ((touch14 > (factorTouch14 * 2)) && leanTouch14)
   {
     leanTouch14 = false;
     Serial.println("Touch 14: " + String(touch14));
-    debounceTouch14 = millis();
+    timeoutTouch14 = millis();
+    recognizedTouch14 = true;
   }
 
   if ((touch27 > (factorTouch27 * 2)) && leanTouch27)
   {
     leanTouch27 = false;
     Serial.println("Touch 27: " + String(touch27));
-    debounceTouch27 = millis();
+    timeoutTouch27 = millis();
+    recognizedTouch27 = true;
   }
 
   // verifica a necessidade de uma calibração
@@ -225,14 +211,12 @@ void loop()
     startValueTouch12 = touch12;
     factorTouch12 = startValueTouch12 * percentTouch12;
   }
-
   if (touch14 > ((startValueTouch14 * percentTouch14) + startValueTouch14))
   {
     Serial.println("Fazer calibração Touch14");
     startValueTouch14 = touch14;
     factorTouch14 = startValueTouch14 * percentTouch14;
   }
-
   if (touch27 > ((startValueTouch27 * percentTouch27) + startValueTouch27))
   {
     Serial.println("Fazer calibração Touch27");

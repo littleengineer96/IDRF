@@ -244,5 +244,4 @@
  include/globaldef.h include/prototypes.h include/globalvar.h \
  include/isr.h include/memoriaFlash.h include/saveStatus.h \
  include/setting.h include/setupBlynk.h include/setupOTA.h \
- include/mrfc522_.h lib/Keypad-master/src/Keypad.h \
- lib/Keypad-master/src/Key.h
+ include/mrfc522_.h
