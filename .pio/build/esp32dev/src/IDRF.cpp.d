@@ -223,7 +223,7 @@
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.h \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.hpp \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson/Configuration.hpp \
- lib/WiFiManager-master/WiFiManager.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/WiFiManager/WiFiManager.h \
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_wifi.h \
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_wifi_types.h \
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_private/esp_wifi_private.h \
@@ -235,7 +235,8 @@
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/nghttp/port/include/http_parser.h \
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/Uri.h \
  C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src/detail/RequestHandler.h \
- lib/WiFiManager-master/strings_en.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/WiFiManager/wm_strings_en.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/WiFiManager/wm_consts_en.h \
  .pio/libdeps/esp32dev/MFRC522-yp/src/MFRC522.h \
  .pio/libdeps/esp32dev/MFRC522-yp/src/require_cpp11.h \
  .pio/libdeps/esp32dev/MFRC522-yp/src/deprecated.h \
@@ -244,4 +245,21 @@
  include/globaldef.h include/prototypes.h include/globalvar.h \
  include/isr.h include/memoriaFlash.h include/saveStatus.h \
  include/setting.h include/setupBlynk.h include/setupOTA.h \
- include/mrfc522_.h
+ include/mrfc522_.h \
+ C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src/ESPmDNS.h \
+ C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mdns/include/mdns.h \
+ include/interface2.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/ESPAsyncWebServer.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/StringArray.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/AsyncTCP/src/AsyncTCP.h \
+ C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/pbuf.h \
+ C:/Users/Thiago/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/lwip/lwip/src/include/lwip/err.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/WebResponseImpl.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/WebHandlerImpl.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/AsyncWebSocket.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/AsyncWebSynchronization.h \
+ C:/Users/Thiago/Documents/Arduino/libraries/ESPAsyncWebServer-master/src/AsyncEventSource.h \
+ lib/NTPClient-master/NTPClient.h \
+ lib/Arduino-Temperature-Control-Library-master/DallasTemperature.h \
+ .pio/libdeps/esp32dev/OneWire/OneWire.h \
+ .pio/libdeps/esp32dev/OneWire/util/OneWire_direct_regtype.h

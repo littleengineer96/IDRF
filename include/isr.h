@@ -5,7 +5,10 @@
 
 // extern unsigned long TimeCheck;
 // extern unsigned long TimeOutConnect;
-// extern unsigned long TimeOut;
+extern unsigned long ledBlynkTime;
+extern unsigned long ledBlynkTimeOff;
+extern unsigned long ledBlynkTimeOn;
+extern bool ledBlynkState;
 
 // extern ESP_32 MyESP32;
 // extern hw_timer_t *timer;
@@ -48,6 +51,38 @@ void My_Timer()
             MyESP32.CheckConnection = true;
             TimeCheck = TIME_CHECK_CONNECTION;
         }
+    }
+
+    // if (ledBlynkTimeOff)
+    // {
+    //     ledBlynkTimeOff -= 1;
+    // }
+    // else if (ledBlynkTimeOn)
+    // {
+    //     ledBlynkTimeOn -= 1;
+    // }
+
+    if (ledBlynkTime)
+    {
+        ledBlynkTime -= 1;
+    }
+    else
+    {
+        // if (ledBlynkTime == 0)
+        // {
+            if (ledBlynkState)
+            {
+                ledBlynkTime = ledBlynkTimeOn;
+                digitalWrite(PIN_LED_BORD, true);
+                ledBlynkState = !ledBlynkState;
+            }
+            else
+            {
+                ledBlynkTime = ledBlynkTimeOff;
+                digitalWrite(PIN_LED_BORD, false);
+                ledBlynkState = !ledBlynkState;
+            }
+        // }
     }
 }
 #endif

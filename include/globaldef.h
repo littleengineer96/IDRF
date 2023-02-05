@@ -3,6 +3,11 @@
 
 #include "prototypes.h"
 
+// #define SSID_AP "mydev_idrf"
+// #define PASS_AP "12345678"
+#define SSID_AP "GAMEPLAY"
+#define PASS_AP "12345678"
+
 #define BLYNK_PRINT Serial
 #define BAUD_RATE 115200
 #define DATA_STATE_ADDRESS "/dataState.txt"
@@ -21,7 +26,8 @@
 #define VERSION "1v0-"         // versão 1.0
 #define SERIE "1"              // serie 2
 #define LOTE "A"               // lote "A"
-#define DEVICE_NAME "IDRF_1v0" // nome completo do dispositivo
+// #define DEVICE_NAME "IDRF_1v0" // nome completo do dispositivo
+#define DEVICE_NAME "mydevice" // nome completo do dispositivo
 #define DEVICE_PASS "12345678"
 //#define DIVICE_NAME "WiGatekey2030" //nome completo do dispositivo
 
@@ -29,7 +35,7 @@
 #define passAP DEVICE_PASS
 
 #define TIMEOUT_PORTAL 60      // time in s
-#define TIME_INTERRUPT 1000000 // tempo em us
+#define TIME_INTERRUPT 1000 // tempo em us
 //#define TIME_ISR_RESET 500 //tempo em milisegundos, deve ser 1000 para que TIMER_AP seja inserido em segundos
 //#define TIMER_AP 150 //tempo  1s = 2   150 = 75s
 #define TIME_ISR_RESET 250 // tempo em milisegundos, deve ser 1000 para que TIMER_AP seja inserido em segundos
@@ -49,16 +55,20 @@
 #define ERRO 0
 #define DEBUG 0
 #define TRY_AGAIN_CONNECT 4
-#define TIME_CHECK_CONNECTION 30 // SEGUNDOS
+#define TIME_CHECK_CONNECTION 30000 // ms
 #define TIMEOUT_CONNECT 200      //
 
-#define LED_BORD 2
+#define PIN_LED_BORD 2
+#define LED_TIME_ON 100
+#define LED_TIME_WIFI_CONNECTED 700
+#define LED_TIME_WIFI_CONNECTING 200
+
 #define ATTEMPTS 3
 #define SAMPLES 10
 
 #define ADC_VBAT 34
-#define RES_R1 47000.0
-#define RES_R2 8290.0
+#define RES_R1 10000.0
+#define RES_R2 10000.0
 #define VREF 3.30
 #define RESOLUTION_ADC 4095
 
@@ -72,23 +82,27 @@
 #define MOV_ROBO_LEFT V4
 
 #define UNLOCK_PORT V1  // PINO VIRTUAL PARA CONTROLAR SOLENOIDE
-// #define PIN_SOLENOIDE 4 // PINO DE CONTROLE DE SOLENOIDE
-#define PIN_SOLENOIDE 17 // PINO DE CONTROLE DE SOLENOIDE
+#define DOOR_STATE_V2 V5
 
-#define GET_VBAT V2
+// #define PIN_SOLENOIDE 4 // PINO DE CONTROLE DE SOLENOIDE
+#define PIN_SOLENOIDE 13 // PINO DE CONTROLE DE SOLENOIDE
+#define PIN_REEDSWITCH 27 // PINO FEEDBACK
+#define PIN_DS18B20 26
 
 // pins ESP32
-#define OUTPIN_SERVO_PAN 25
-#define OUTPIN_SERVO_TILT 26
-#define OUTPIN_A4988_EN 27
-#define OUTPIN_A4988_SLEEP 14
-#define OUTPIN_A4988_STEP 12
-#define OUTPIN_A4988_DIR 16
+// #define OUTPIN_SERVO_PAN 25
+// #define OUTPIN_SERVO_TILT 26
+// // #define OUTPIN_A4988_EN 27
+// #define OUTPIN_A4988_SLEEP 14
+// #define OUTPIN_A4988_STEP 12
+// #define OUTPIN_A4988_DIR 16
 
 // #define PIN_CS_MRFC522 5
 // #define PIN_RST_MRFC522 2
-#define PIN_CS_MRFC522 4
-#define PIN_RST_MRFC522 13
+// #define PIN_CS_MRFC522 4
+// #define PIN_RST_MRFC522 13
+#define PIN_CS_MRFC522 16
+#define PIN_RST_MRFC522 17
 
 #define UID_TAG_CARD "C7:CE:CE:D7"
 #define UID_TAG_CHAVEIRO "73:39:99:14"

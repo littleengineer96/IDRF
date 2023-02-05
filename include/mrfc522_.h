@@ -5,6 +5,7 @@
 
 void MRFC522_get_id();
 // void MRFC522_setup();
+void MRFC522_open(unsigned long time);
 
 MFRC522 rfid(PIN_CS_MRFC522, PIN_RST_MRFC522);
 
@@ -41,21 +42,42 @@ void MRFC522_get_id()
     if (strID.compareTo(UID_TAG_CARD) == 0)
     {
         Serial.println("Acesso liberado: card ok");
-        digitalWrite(PIN_SOLENOIDE, HIGH);
-        delay(2000);
-        digitalWrite(PIN_SOLENOIDE, LOW);
+        MRFC522_open(2000);
     }
 
     if (strID.compareTo(UID_TAG_CHAVEIRO) == 0)
     {
         Serial.println("Acesso liberado: chaveiro ok\n");
-        digitalWrite(PIN_SOLENOIDE, HIGH);
-        delay(2000);
-        digitalWrite(PIN_SOLENOIDE, LOW);
+        MRFC522_open(2000);
     }
 
     rfid.PICC_HaltA();      // PARADA DA LEITURA DO CARTÃO
     rfid.PCD_StopCrypto1(); // PARADA DA CRIPTOGRAFIA NO PCD
 }
 
+void MRFC522_open(unsigned long time)
+{
+    // ledcWrite(0, 30);
+    // delay(200);
+    
+    // ledcWrite(0, 50);
+    // delay(500);
+
+    // ledcWrite(0, 70);
+    // delay(200);
+
+    // ledcWrite(0, 100);
+    // time = 2000;
+    // delay(time);
+    // ledcWrite(0, 0);
+
+    // digitalWrite(PIN_SOLENOIDE, HIGH);
+    // delay(100);
+    // digitalWrite(PIN_SOLENOIDE, LOW);
+    // delay(10);
+    digitalWrite(PIN_SOLENOIDE, HIGH);
+    time = 3000;
+    delay(time);
+    digitalWrite(PIN_SOLENOIDE, LOW);
+}
 #endif
