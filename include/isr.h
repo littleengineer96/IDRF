@@ -62,27 +62,25 @@ void My_Timer()
     //     ledBlynkTimeOn -= 1;
     // }
 
+    /* pisca LED */
     if (ledBlynkTime)
     {
         ledBlynkTime -= 1;
     }
     else
     {
-        // if (ledBlynkTime == 0)
-        // {
-            if (ledBlynkState)
-            {
-                ledBlynkTime = ledBlynkTimeOn;
-                digitalWrite(PIN_LED_BORD, true);
-                ledBlynkState = !ledBlynkState;
-            }
-            else
-            {
-                ledBlynkTime = ledBlynkTimeOff;
-                digitalWrite(PIN_LED_BORD, false);
-                ledBlynkState = !ledBlynkState;
-            }
-        // }
+        if (ledBlynkState)
+        {
+            ledBlynkTime = ledBlynkTimeOn;
+            digitalWrite(PIN_LED_BORD, true);
+            ledBlynkState = !ledBlynkState;
+        }
+        else
+        {
+            ledBlynkTime = ledBlynkTimeOff;
+            digitalWrite(PIN_LED_BORD, false);
+            ledBlynkState = !ledBlynkState;
+        }
     }
 }
 #endif

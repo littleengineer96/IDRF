@@ -152,7 +152,7 @@ void setup()
       break;
     }
 
-    attempts +=1;
+    attempts += 1;
   }
   interface2Begin();
 
@@ -279,6 +279,7 @@ void loop()
       else
       {
         Serial.println("\nError Connect to Blynk.");
+        ESP.restart();
       }
     }
 
@@ -421,6 +422,7 @@ void loop()
     }
 
     // Blynk.virtualWrite(DOOR_STATE_V2, stateDoor);
+    Blynk.virtualWrite(IP_VALUE_V8, WiFi.localIP().toString());
 
     double Vbat; //= analogRead(ADC_VBAT);
     Vbat = analogReadAdjusted(ADC_VBAT);
@@ -432,12 +434,20 @@ void loop()
 
     Serial.println("Vbat:" + String(Vbat) + " V");
     // Serial.println("Vbat_:" + String(Vbat) + " V");
-    Blynk.virtualWrite(V6, Vbat);
+    Blynk.virtualWrite(BAT_VALUE_V6, Vbat);
 
     tempCelsius = readTemp();
     Serial.println("Temp:" + String(tempCelsius) + "oC");
 
-    Blynk.virtualWrite(V7, tempCelsius);
+    Blynk.virtualWrite(TEMP_VALUE_V7, tempCelsius);
+    doorState = digitalRead(PIN_REEDSWITCH);
+
+    String stateDoor = "Porta Aberta";
+    if (!doorState)
+    {
+      stateDoor = "Porta Fechada";
+    }
+    Blynk.virtualWrite(DOOR_STATE_V2, stateDoor);
 
     timeVerify = millis();
   }
@@ -503,6 +513,14 @@ BLYNK_WRITE(UNLOCK_PORT)
     // digitalWrite(PIN_SOLENOIDE, LOW);
     MRFC522_open(3000);
   }
+  doorState = digitalRead(PIN_REEDSWITCH);
+
+  String stateDoor = "Porta Aberta";
+  if (!doorState)
+  {
+    stateDoor = "Porta Fechada";
+  }
+  Blynk.virtualWrite(DOOR_STATE_V2, stateDoor);
 }
 
 BLYNK_READ(DOOR_STATE_V2)
