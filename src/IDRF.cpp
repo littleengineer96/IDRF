@@ -106,6 +106,8 @@ bool recognizedTouch14 = false;
 bool recognizedTouch27 = false;
 
 unsigned long timeVerify = 0;
+unsigned long timeAwake = 0;
+
 bool doorState = false;
 String WiFi_State();
 // BlynkTimer timer;
@@ -119,6 +121,10 @@ DallasTemperature sensors(&oneWire);
 float readTemp();
 float tempCelsius = -1;
 bool modeAPOn = false;
+
+void print_wakeup_reason();
+RTC_DATA_ATTR int bootCount = 0;
+
 void setup()
 {
   Comunication(BAUD_RATE);
@@ -128,6 +134,11 @@ void setup()
   pinMode(PIN_REEDSWITCH, INPUT_PULLUP);
   pinMode(PIN_LED_BORD, OUTPUT);
   pinMode(PIN_DS18B20, INPUT_PULLUP);
+  ++bootCount;
+  Serial.println("[BOOT] Boot number: " + String(bootCount));
+  print_wakeup_reason();
+  Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) +
+  " Seconds");
   // ledcSetup(0, 1000, 8);
   // ledcAttachPin(PIN_SOLENOIDE, 0);
   ledBlynkTimeOff = LED_TIME_WIFI_CONNECTING;
@@ -262,6 +273,10 @@ void setup()
   doorState = !digitalRead(PIN_REEDSWITCH);
 
   Blynk.virtualWrite(V8, WiFi.localIP().toString());
+
+  TimeCheck = TIME_CHECK_CONNECTION;
+  timeAwake = TIMEOUT_AWAKE;
+
 }
 
 void loop()
@@ -298,122 +313,17 @@ void loop()
     // delay(100);
   }
 
-  // else if (ledBlynkTimeOn == 0)
-  // {
-  //   digitalWrite(PIN_LED_BORD, false);
-  //   ledBlynkTimeOff = LED_TIME_OFF;
-  //   ledBlynkTimeOn = LED_TIME_ON;
-  // }
-
-  // timer.run();
-  // MRFC522_get_id();
-
-  // faz o dispositivo ficar desconectando
-  //  if (MyESP32.CheckConnection)
-  //  {
-  //    CONNECTION_reconnect(ATTEMPTS);
-  //    BLYNK_reconnect(ATTEMPTS);
-  //    MyESP32.CheckConnection = false;
-  //  }
-  // Serial.println("...");
-
-  // MRFC522_setup();
   MRFC522_get_id();
-  // Serial.println("....");
-
-  // touch12 = touchRead(12);
-  // touch14 = touchRead(14);
-  // touch27 = touchRead(27);
-
-  // identifica o toque
-  // if ((touch12 < (factorTouch12)) && ((millis() - timeoutTouch12) > debounceTouch12))
-  // {
-  //   leanTouch12 = true;
-  // }
-  // if ((touch14 < (factorTouch14)) && ((millis() - timeoutTouch14) > debounceTouch14))
-  // {
-  //   leanTouch14 = true;
-  // }
-  // if ((touch27 < (factorTouch27)) && ((millis() - timeoutTouch27) > debounceTouch27))
-  // {
-  //   leanTouch27 = true;
-  // }
-
-  // define o toque... "apos levantar o dedo"
-  // if ((touch12 > (factorTouch12 * 2)) && leanTouch12)
-  // {
-  //   leanTouch12 = false;
-  //   Serial.println("Touch 12: " + String(touch12));
-  //   timeoutTouch12 = millis();
-  //   recognizedTouch12 = true;
-  // }
-
-  // if ((touch14 > (factorTouch14 * 2)) && leanTouch14)
-  // {
-  //   leanTouch14 = false;
-  //   Serial.println("Touch 14: " + String(touch14));
-  //   timeoutTouch14 = millis();
-  //   recognizedTouch14 = true;
-  // }
-
-  // if ((touch27 > (factorTouch27 * 2)) && leanTouch27)
-  // {
-  //   leanTouch27 = false;
-  //   Serial.println("Touch 27: " + String(touch27));
-  //   timeoutTouch27 = millis();
-  //   recognizedTouch27 = true;
-  // }
-
-  // // verifica a necessidade de uma calibração
-  // if (touch12 > ((startValueTouch12 * percentTouch12) + startValueTouch12))
-  // {
-  //   Serial.println("Fazer calibração Touch12");
-  //   startValueTouch12 = touch12;
-  //   factorTouch12 = startValueTouch12 * percentTouch12;
-  // }
-  // if (touch14 > ((startValueTouch14 * percentTouch14) + startValueTouch14))
-  // {
-  //   Serial.println("Fazer calibração Touch14");
-  //   startValueTouch14 = touch14;
-  //   factorTouch14 = startValueTouch14 * percentTouch14;
-  // }
-  // if (touch27 > ((startValueTouch27 * percentTouch27) + startValueTouch27))
-  // {
-  //   Serial.println("Fazer calibração Touch27");
-  //   startValueTouch27 = touch27;
-  //   factorTouch27 = startValueTouch27 * percentTouch27;
-  // }
-
-  // Serial.println("Touch 26: " + String(touchRead(26)));
-
-  // Serial.println("Touch 25: " + String(touchRead(25)));
-  // Serial.println("Touch 33: " + String(touchRead(33)));
-  // Serial.println("Touch 32: " + String(touchRead(32)));
-  // Serial.println("Touch 35: " + String(touchRead(35)));
-
-  // char leitura_teclas = teclado_personalizado.getKey(); // Atribui a variavel a leitura do teclado
-
-  // if (leitura_teclas)
-  // {                                 // Se alguma tecla foi pressionada
-  //   Serial.println(leitura_teclas); // Imprime a tecla pressionada na porta serial
-  // }
+  
 
   ArduinoOTA.handle();
 
   // delay(1000);
 
-  /* deep_sleep mode */
-  // esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-  // esp_deep_sleep_start();
-
-  /* light sleep mode*/
-  // esp_sleep_enable_timer_wakeup(1000000); // 1 second
-  // int ret = esp_light_sleep_start();
-  // Serial.printf("lp: %d\n", ret);
-
   // handle_interface();
 
-  if (millis() - timeVerify > 10000)
+  // if (millis() - timeVerify > 10000)
+  if (timeVerify == 0)
   {
     if (WiFi.status() == WL_CONNECTED)
     {
@@ -449,8 +359,25 @@ void loop()
     }
     Blynk.virtualWrite(DOOR_STATE_V2, stateDoor);
 
-    timeVerify = millis();
+    // timeVerify = millis();
+    timeVerify = TIMEOUT_UPDADE_INF;
   }
+
+  if (timeAwake == 0)
+  {
+    Serial.println("in deep_sleep...");
+    /* deep_sleep mode */
+    esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+    esp_deep_sleep_start();
+
+    /* light sleep mode*/
+    // esp_sleep_enable_timer_wakeup(2000000); // 1000000 us = 1 s
+    // int ret = esp_light_sleep_start();
+    // Serial.printf("lp: %d\n", ret);
+
+    timeAwake = TIMEOUT_AWAKE;
+  }
+  
 }
 
 double analogReadAdjusted(byte pinNumber)
@@ -626,4 +553,20 @@ float readTemp()
   sensors.requestTemperatures();
   float tempC = sensors.getTempCByIndex(0);
   return tempC;
+}
+
+void print_wakeup_reason(){
+  esp_sleep_wakeup_cause_t wakeup_reason;
+
+  wakeup_reason = esp_sleep_get_wakeup_cause();
+
+  switch(wakeup_reason)
+  {
+    case ESP_SLEEP_WAKEUP_EXT0 : Serial.println("Wakeup caused by external signal using RTC_IO"); break;
+    case ESP_SLEEP_WAKEUP_EXT1 : Serial.println("Wakeup caused by external signal using RTC_CNTL"); break;
+    case ESP_SLEEP_WAKEUP_TIMER : Serial.println("Wakeup caused by timer"); break;
+    case ESP_SLEEP_WAKEUP_TOUCHPAD : Serial.println("Wakeup caused by touchpad"); break;
+    case ESP_SLEEP_WAKEUP_ULP : Serial.println("Wakeup caused by ULP program"); break;
+    default : Serial.printf("Wakeup was not caused by deep sleep: %d\n",wakeup_reason); break;
+  }
 }
