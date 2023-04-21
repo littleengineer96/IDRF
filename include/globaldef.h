@@ -5,7 +5,7 @@
 
 // #define SSID_AP "mydev_idrf"
 // #define PASS_AP "12345678"
-#define SSID_AP "GAMEPLAY"
+#define SSID_AP "explorernet-Thiago"
 #define PASS_AP "12345678"
 
 #define BLYNK_PRINT Serial
@@ -57,6 +57,8 @@
 #define TRY_AGAIN_CONNECT 4
 #define TIME_CHECK_CONNECTION 30000 // ms
 #define TIMEOUT_CONNECT 200      //
+#define TIMEOUT_UPDADE_INF 10000 //ms
+#define TIMEOUT_AWAKE 5000 //ms
 
 #define PIN_LED_BORD 2
 #define LED_TIME_ON 100
@@ -112,7 +114,7 @@
 #define UID_TAG_CHAVEIRO "73:39:99:14"
 
 #define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP 10        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP 2        /* Time ESP32 will go to sleep (in seconds) */
 
 enum State
 {                           //                                                         LED_ON    LED_OFF

@@ -9,6 +9,8 @@ extern unsigned long ledBlynkTime;
 extern unsigned long ledBlynkTimeOff;
 extern unsigned long ledBlynkTimeOn;
 extern bool ledBlynkState;
+extern unsigned long timeVerify;
+extern unsigned long timeAwake;
 
 // extern ESP_32 MyESP32;
 // extern hw_timer_t *timer;
@@ -46,12 +48,19 @@ void My_Timer()
     {
         TimeCheck -= 1;
 
-        if (TimeCheck == 0)
-        {
-            MyESP32.CheckConnection = true;
-            TimeCheck = TIME_CHECK_CONNECTION;
-        }
+        // if (TimeCheck == 0)
+        // {
+        //     MyESP32.CheckConnection = true;
+        //     TimeCheck = TIME_CHECK_CONNECTION;
+        // }
     }
+
+    if (timeVerify)
+    timeVerify -=1;
+
+    if(timeAwake)
+    timeAwake -=1;
+    
 
     // if (ledBlynkTimeOff)
     // {

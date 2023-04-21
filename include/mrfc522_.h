@@ -13,7 +13,9 @@ void MRFC522_setup()
 {
     SPI.begin();
     rfid.PCD_Init();
-    MRFC522_get_id();
+    // MRFC522_get_id();
+    // rfid.PCD_Reset();
+    
 }
 
 void MRFC522_get_id()
